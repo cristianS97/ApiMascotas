@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 from models import Mascota
 from database import SessionLocal
+from routers.raza import RazaResponse
 
 router = APIRouter(
     prefix='/mascota',
@@ -27,9 +28,8 @@ db_dependency = Annotated[Session, Depends(get_db)]
 class MascotaBase(BaseModel):
     """Esquema base con los campos comunes para una mascota."""
     nombre: str = Field(min_length=2, description="Nombre de la mascota", json_schema_extra={"example": "Firulais"})
-    especie: str = Field(min_length=3, description="Especie (perro, gato, etc.)", json_schema_extra={"example": "Perro"})
-    raza: str = Field(min_length=3, description="Raza de la mascota", json_schema_extra={"example": "Golden Retriever"})
     edad: int = Field(gt=0, description="Edad en años", json_schema_extra={"example": 3})
+    raza_id: int = Field(ge=0, description="Id de la raza de la mascota", json_schema_extra={"example": 3})
 
 class MascotaRequest(MascotaBase):
     """Esquema para la creación o actualización de mascotas."""
@@ -38,6 +38,7 @@ class MascotaRequest(MascotaBase):
 class MascotaResponse(MascotaBase):
     """Esquema de respuesta que incluye el ID generado por la base de datos."""
     id: int = Field(description="ID único de la mascota en el sistema")
+    raza_obj: RazaResponse
 
     class Config:
         from_attributes = True

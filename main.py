@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import engine
 import models
-from routers import mascota
+from routers import mascota, raza
 
 # uvicorn main:app --reload
 app = FastAPI(
@@ -24,3 +24,4 @@ def healthcheck():
     return {"Hello": "World"}
 
 app.include_router(mascota.router)
+app.include_router(raza.router)
