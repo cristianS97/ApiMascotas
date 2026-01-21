@@ -52,7 +52,6 @@ class EspecieResponse(BaseModel):
     description="Retorna una lista completa de todas las razas registradas en la base de datos."
 )
 async def obtener_listado_completo_razas(db: db_dependency):
-    print("obtener_listado_completo_razas")
     return db.query(Raza).all()
 
 @router.get(
@@ -69,11 +68,22 @@ async def obtener_raza_por_especie(
     """
     Busca una raza específica una especia.
     """
-    print("obtener_raza_por_especie")
     razas = db.query(Raza).filter(func.lower(Raza.especie) == especie.lower()).all()
     if not razas:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se han encontrado razas para la especia buscada")
     return razas
+
+@router.get(
+    "/especies/",
+    status_code=status.HTTP_200_OK,
+    response_model=List[EspecieResponse],
+    summary="Obtener listado de especies únicas"
+)
+async def obtener_listado_especies(db: db_dependency):
+    """
+    Retorna el listado de especies del sistema
+    """
+    return [{'especie': especie[0]} for especie in db.query(Raza.especie).distinct().all()]
 
 @router.get(
     "/{id}/", 
@@ -89,24 +99,10 @@ async def obtener_raza_por_id(
     """
     Busca una raza específica mediante su identificador único.
     """
-    print("obtener_raza_por_id")
     raza = db.query(Raza).filter(Raza.id == id).first()
     if raza is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se ha encontrado la raza buscada")
     return raza
-
-@router.get(
-    "/especies/",
-    status_code=status.HTTP_200_OK,
-    response_model=List[EspecieResponse],
-    summary="Obtener listado de especies únicas"
-)
-async def obtener_listado_especies(db: db_dependency):
-    """
-    Retorna el listado de especies del sistema
-    """
-    print("obtener_listado_especies")
-    return [{'especie': especie[0]} for especie in db.query(Raza.especie).distinct().all()]
 
 @router.post(
     "/", 
@@ -115,7 +111,6 @@ async def obtener_listado_especies(db: db_dependency):
     description="Crea un nuevo registro de raza y lo persiste en la base de datos."
 )
 async def registrar_raza(db: db_dependency, raza_request: RazaRequest):
-    print("registrar_raza")
     raza_model = Raza(**raza_request.model_dump())
     db.add(raza_model)
     db.commit()
@@ -134,7 +129,6 @@ async def actualizar_datos_raza(
     """
     Actualiza íntegramente los datos de una raza existente.
     """
-    print("actualizar_datos_raza")
     raza_model = db.query(Raza).filter(Raza.id == id).first()
     if raza_model is None:
         raise HTTPException(status_code=404, detail="No se ha encontrado la raza buscada")
@@ -155,7 +149,6 @@ async def eliminar_raza(db: db_dependency, id: int = Path(gt=0, description="ID 
     """
     Elimina permanentemente una raza de la base de datos.
     """
-    print("eliminar_raza")
     raza_query = db.query(Raza).filter(Raza.id == id)
     if raza_query.first() is None:
         raise HTTPException(status_code=404, detail="No se ha encontrado la raza buscada")
