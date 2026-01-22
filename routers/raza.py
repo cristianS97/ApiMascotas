@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, Path, Body
+from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 from typing import Annotated, List
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
-from models import Raza
+from models import Raza, Mascota
 from database import SessionLocal
 
 router = APIRouter(
@@ -111,6 +111,9 @@ async def obtener_raza_por_id(
     description="Crea un nuevo registro de raza y lo persiste en la base de datos."
 )
 async def registrar_raza(db: db_dependency, raza_request: RazaRequest):
+    raza = db.query(Raza).filter(func.lower(Raza.raza)==raza_request.raza.lower(), func.lower(Raza.especie)==raza_request.especie.lower()).first()
+    if raza is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"La raza {raza_request.raza} de la especie {raza_request.especie} ya se encuentra registrada")
     raza_model = Raza(**raza_request.model_dump())
     db.add(raza_model)
     db.commit()
@@ -129,9 +132,13 @@ async def actualizar_datos_raza(
     """
     Actualiza íntegramente los datos de una raza existente.
     """
+    raza = db.query(Raza).filter(func.lower(Raza.raza)==raza_request.raza.lower(), func.lower(Raza.especie)==raza_request.especie.lower()).first()
+    if raza is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=f"La raza {raza_request.raza} de la especie {raza_request.especie} ya se encuentra registrada")
+
     raza_model = db.query(Raza).filter(Raza.id == id).first()
     if raza_model is None:
-        raise HTTPException(status_code=404, detail="No se ha encontrado la raza buscada")
+        raise HTTPException(status_code=404, detail=f"No se ha encontrado la raza buscada con id {id}")
     
     for key, value in raza_request.model_dump().items():
         setattr(raza_model, key, value)
@@ -152,6 +159,10 @@ async def eliminar_raza(db: db_dependency, id: int = Path(gt=0, description="ID 
     raza_query = db.query(Raza).filter(Raza.id == id)
     if raza_query.first() is None:
         raise HTTPException(status_code=404, detail="No se ha encontrado la raza buscada")
+    
+    mascotas = db.query(Mascota).filter(Mascota.raza_id == id).first()
+    if mascotas is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No puede eliminar la raza, porque tiene mascotas registradas")
     
     raza_query.delete()
     db.commit()

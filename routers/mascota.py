@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Path, Body
+from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
-from models import Mascota
+from models import Mascota, Raza
 from database import SessionLocal
 from routers.raza import RazaResponse
 
@@ -81,6 +81,9 @@ async def obtener_mascota_por_id(
     description="Crea un nuevo registro de mascota y lo persiste en la base de datos."
 )
 async def registrar_mascota(db: db_dependency, mascota_request: MascotaRequest):
+    raza = db.query(Raza).filter(Raza.id == mascota_request.raza_id).first()
+    if raza is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No existe la raza con id {mascota_request.raza_id}")
     mascota_model = Mascota(**mascota_request.model_dump())
     db.add(mascota_model)
     db.commit()
@@ -99,6 +102,9 @@ async def actualizar_datos_mascota(
     """
     Actualiza íntegramente los datos de una mascota existente.
     """
+    raza = db.query(Raza).filter(Raza.id == mascota_request.raza_id).first()
+    if raza is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No existe la raza con id {mascota_request.raza_id}")
     mascota_model = db.query(Mascota).filter(Mascota.id == id).first()
     if mascota_model is None:
         raise HTTPException(status_code=404, detail="No se ha encontrado la mascota buscada")
