@@ -63,7 +63,7 @@ async def obtener_listado_completo_razas(db: db_dependency):
 )
 async def obtener_raza_por_especie(
     db: db_dependency, 
-    especie: str = Path(description="Nombre de la especie a filtrar", example="Perro")
+    especie: str = Path(description="Nombre de la especie a filtrar", examples="Perro")
 ):
     """
     Busca una raza específica una especia.
@@ -94,7 +94,7 @@ async def obtener_listado_especies(db: db_dependency):
 )
 async def obtener_raza_por_id(
     db: db_dependency, 
-    id: int = Path(gt=0, description="ID numérico de la raza a consultar", example=1)
+    id: int = Path(gt=0, description="ID numérico de la raza a consultar", examples=1)
 ):
     """
     Busca una raza específica mediante su identificador único.

@@ -64,7 +64,7 @@ async def obtener_listado_completo_mascotas(db: db_dependency):
 )
 async def obtener_mascota_por_id(
     db: db_dependency, 
-    id: int = Path(gt=0, description="ID numérico de la mascota a consultar", example=1)
+    id: int = Path(gt=0, description="ID numérico de la mascota a consultar", examples=1)
 ):
     """
     Busca una mascota específica mediante su identificador único.
