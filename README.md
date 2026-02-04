@@ -1,6 +1,6 @@
 # 🐾 Sistema de Gestión Veterinaria (API REST)
 
-Backend profesional desarrollado con FastAPI para la administración de registros de mascotas y razas. El sistema está completamente contenedorizado y listo para producción o desarrollo móvil.
+Backend desarrollado con FastAPI para la administración de registros de mascotas y razas. El sistema está completamente dockerizado y listo para su uso.
 
 ---
 
@@ -12,6 +12,7 @@ Este backend sirve como motor de datos para la siguiente aplicación:
 
 ## 📂 Estructura del Proyecto
 
+```
 .
 ├── routers/               # Lógica de endpoints modularizada
 │   ├── mascota.py         # Endpoints de registros de mascotas
@@ -23,6 +24,7 @@ Este backend sirve como motor de datos para la siguiente aplicación:
 ├── Dockerfile             # Configuración de imagen Docker para la API
 ├── docker-compose.yml     # Orquestación de todos los servicios
 └── requirements.txt       # Dependencias del proyecto (incluye psycopg2, sqlalchemy, etc.)
+```
 
 ---
 
@@ -50,22 +52,22 @@ El sistema utiliza Docker Compose con una red interna privada. La API incluye un
 ### 🐕 Gestión de Mascotas (/mascota)
 | Método | Endpoint | Descripción |
 | :--- | :--- | :--- |
-| GET | /mascota/ | Lista todas las mascotas (incluye relación con raza). |
-| GET | /mascota/{id}/ | Detalle individual por ID. |
-| POST | /mascota/ | Registro (Valida que el raza_id exista). |
-| PUT | /mascota/{id}/ | Actualización completa de datos. |
-| DELETE | /mascota/{id}/ | Eliminación física del registro. |
+| ![GET](https://img.shields.io/badge/GET-green) | /mascota/ | Lista todas las mascotas (incluye relación con raza). |
+| ![GET](https://img.shields.io/badge/GET-green) | /mascota/{id}/ | Detalle individual por ID. |
+| ![POST](https://img.shields.io/badge/POST-blue) | /mascota/ | Registro (Valida que el raza_id exista). |
+| ![PUT](https://img.shields.io/badge/PUT-orange) | /mascota/{id}/ | Actualización completa de datos. |
+| ![DELETE](https://img.shields.io/badge/DELETE-red) | /mascota/{id}/ | Eliminación física del registro. |
 
 ### 🐈 Gestión de Razas (/raza)
 | Método | Endpoint | Descripción |
 | :--- | :--- | :--- |
-| GET | /raza/ | Lista todas las razas registradas. |
-| GET | /raza/{id}/ | Detalle de raza por ID. |
-| GET | /raza/especies/ | Obtiene lista de especies únicas registradas. |
-| GET | /raza/especie/{especie}/ | Filtra razas por nombre de especie (Perro, Gato, etc.). |
-| POST | /raza/ | Registra nueva raza (Evita duplicados nombre/especie). |
-| PUT | /raza/{id}/ | Modifica datos de una raza existente. |
-| DELETE | /raza/{id}/ | Eliminación (Bloqueada si hay mascotas asociadas). |
+| ![GET](https://img.shields.io/badge/GET-green) | /raza/ | Lista todas las razas registradas. |
+| ![GET](https://img.shields.io/badge/GET-green) | /raza/{id}/ | Detalle de raza por ID. |
+| ![GET](https://img.shields.io/badge/GET-green) | /raza/especies/ | Obtiene lista de especies únicas registradas. |
+| ![GET](https://img.shields.io/badge/GET-green) | /raza/especie/{especie}/ | Filtra razas por nombre de especie (Perro, Gato, etc.). |
+| ![POST](https://img.shields.io/badge/POST-blue) | /raza/ | Registra nueva raza (Evita duplicados nombre/especie). |
+| ![PUT](https://img.shields.io/badge/PUT-orange) | /raza/{id}/ | Modifica datos de una raza existente. |
+| ![DELETE](https://img.shields.io/badge/DELETE-red) | /raza/{id}/ | Eliminación (Bloqueada si hay mascotas asociadas). |
 
 ---
 
